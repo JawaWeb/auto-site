@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideStyle | Админ-панель</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #fff, #ff4d4d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .admin-panel {
+            background: #111;
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid #ff4d4d;
+        }
+        .admin-panel h3 {
+            color: #ff4d4d;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .admin-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .admin-form input {
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .admin-form input:focus {
+            outline: none;
+            border-color: #ff4d4d;
+        }
+        .admin-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .admin-btn {
+            background: #ff4d4d;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .admin-btn:hover {
+            background: #ff1a1a;
+            transform: scale(1.02);
+        }
+        .admin-btn.delete {
+            background: #666;
+        }
+        .admin-btn.delete:hover {
+            background: #ff4d4d;
+        }
+        .cars-list {
+            margin-top: 30px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .cars-list h4 {
+            margin-bottom: 15px;
+            color: #ff4d4d;
+        }
+        .car-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .car-item:last-child {
+            border-bottom: none;
+        }
+        .car-name {
+            font-weight: 600;
+        }
+        .car-price {
+            color: #ff4d4d;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #ff4d4d;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #22c55e;
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.error {
+            background: #ff4d4d;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .admin-panel { padding: 20px; }
+            .admin-form { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 RideStyle | Админ-панель</h1>
+    
+    <div class="admin-panel">
+        <h3>➕ Управление автопарком</h3>
+        <div class="admin-form">
+            <input type="text" id="admin-name" placeholder="Название авто (напр. Porsche Cayenne)">
+            <input type="number" id="admin-priceUAH" placeholder="Цена в грн">
+            <input type="number" id="admin-priceUSD" placeholder="Цена в $">
+            <input type="text" id="admin-engine" placeholder="Двигатель (напр. V8 4.0L)">
+            <input type="text" id="admin-fuel" placeholder="Расход (напр. 12 л/100км)">
+            <input type="text" id="admin-drive" placeholder="Привод (напр. Полный)">
+            <input type="text" id="admin-transmission" placeholder="КПП (напр. Автомат)">
+            <input type="text" id="admin-year" placeholder="Год (напр. 2024)">
+            <input type="text" id="admin-img" placeholder="Ссылки на фото (3 шт, через запятую)">
+        </div>
+        <div class="admin-buttons">
+            <button class="admin-btn" onclick="addCar()">➕ Добавить машину</button>
+            <select id="edit-car-select" style="padding: 10px; background: #1a1a1a; color: #fff; border-radius: 40px;"></select>
+            <button class="admin-btn" onclick="editCar()">✏️ Сохранить изменения</button>
+            <button class="admin-btn delete" onclick="deleteCar()">🗑️ Удалить выбранную</button>
+        </div>
+    </div>
+    
+    <div class="cars-list">
+        <h4>📋 Текущий автопарк</h4>
+        <div id="cars-list-container"></div>
+    </div>
+    
+    <a href="index.html" class="back-link">← Вернуться на сайт</a>
+</div>
+
+<script>
+    // Загрузка данных из localStorage
+    let carsData = JSON.parse(localStorage.getItem('ridestyle_cars'));
+    if (!carsData || carsData.length === 0) {
+        carsData = [
+            { name: "Porsche Cayenne", year: "2024", priceUAH: 2500, priceUSD: 65, engine: "V8 4.0L", fuel: "12 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "5.2 сек", maxSpeed: "265 км/ч", img: ["https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] },
+            { name: "BMW X6 M", year: "2023", priceUAH: 2800, priceUSD: 72, engine: "V8 4.4L", fuel: "13 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "4.8 сек", maxSpeed: "250 км/ч", img: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?q=80&w=2070&auto=format"] },
+            { name: "Mercedes GLE 63", year: "2025", priceUAH: 3200, priceUSD: 85, engine: "V8 4.0L", fuel: "12.5 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "5.0 сек", maxSpeed: "270 км/ч", img: ["https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2064&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] },
+            { name: "Audi RS7", year: "2024", priceUAH: 2900, priceUSD: 75, engine: "V8 4.0L", fuel: "11.5 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "4.5 сек", maxSpeed: "280 км/ч", img: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] },
+            { name: "Toyota Land Cruiser", year: "2024", priceUAH: 1800, priceUSD: 48, engine: "V6 3.5L", fuel: "14 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "8.5 сек", maxSpeed: "210 км/ч", img: ["https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] },
+            { name: "Range Rover Sport", year: "2024", priceUAH: 2200, priceUSD: 58, engine: "V6 3.0L", fuel: "13 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "7.2 сек", maxSpeed: "225 км/ч", img: ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] },
+            { name: "Volkswagen Touareg", year: "2023", priceUAH: 1500, priceUSD: 40, engine: "V6 3.0L", fuel: "11 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "7.8 сек", maxSpeed: "220 км/ч", img: ["https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format"] },
+            { name: "Lexus LX570", year: "2025", priceUAH: 2600, priceUSD: 68, engine: "V8 5.7L", fuel: "15 л/100км", drive: "Полный", transmission: "Автомат", acceleration: "7.5 сек", maxSpeed: "220 км/ч", img: ["https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2064&auto=format","https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format","https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format"] }
+        ];
+        localStorage.setItem('ridestyle_cars', JSON.stringify(carsData));
+    }
+    
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${isError ? 'error' : ''}`;
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    function saveToLocalStorage() {
+        localStorage.setItem('ridestyle_cars', JSON.stringify(carsData));
+        renderCarList();
+        updateEditSelect();
+        showToast('✅ Данные сохранены!');
+    }
+    
+    function renderCarList() {
+        const container = document.getElementById('cars-list-container');
+        if (!container) return;
+        container.innerHTML = carsData.map((car, idx) => `
+            <div class="car-item">
+                <span class="car-name">${car.name} ${car.year}</span>
+                <span class="car-price">${car.priceUAH} грн / ${car.priceUSD}$</span>
+                <span style="color:#888;">${car.engine}</span>
+            </div>
+        `).join('');
+    }
+    
+    function updateEditSelect() {
+        const select = document.getElementById('edit-car-select');
+        if (select) {
+            select.innerHTML = carsData.map((car, idx) => `<option value="${idx}">${car.name} ${car.year}</option>`).join('');
+        }
+    }
+    
+    function addCar() {
+        const name = document.getElementById('admin-name').value;
+        const priceUAH = parseInt(document.getElementById('admin-priceUAH').value);
+        const priceUSD = parseInt(document.getElementById('admin-priceUSD').value);
+        const engine = document.getElementById('admin-engine').value;
+        const fuel = document.getElementById('admin-fuel').value;
+        const drive = document.getElementById('admin-drive').value;
+        const transmission = document.getElementById('admin-transmission').value;
+        const year = document.getElementById('admin-year').value;
+        const imgStr = document.getElementById('admin-img').value;
+        const img = imgStr.split(',').map(s => s.trim());
+        
+        if (name && priceUAH && priceUSD && engine) {
+            carsData.push({
+                name, year, priceUAH, priceUSD, engine, fuel, drive, transmission,
+                acceleration: "н/д", maxSpeed: "н/д",
+                img: img.length ? img : ["https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070&auto=format"]
+            });
+            saveToLocalStorage();
+            document.querySelectorAll('.admin-form input').forEach(inp => inp.value = '');
+            showToast(`✅ Авто ${name} добавлено!`);
+        } else {
+            showToast('❌ Заполните название и цены!', true);
+        }
+    }
+    
+    function editCar() {
+        const idx = document.getElementById('edit-car-select').value;
+        if (idx === '') return;
+        
+        const name = document.getElementById('admin-name').value;
+        const priceUAH = parseInt(document.getElementById('admin-priceUAH').value);
+        const priceUSD = parseInt(document.getElementById('admin-priceUSD').value);
+        const engine = document.getElementById('admin-engine').value;
+        const fuel = document.getElementById('admin-fuel').value;
+        const drive = document.getElementById('admin-drive').value;
+        const transmission = document.getElementById('admin-transmission').value;
+        const year = document.getElementById('admin-year').value;
+        const imgStr = document.getElementById('admin-img').value;
+        
+        if (name) carsData[idx].name = name;
+        if (priceUAH) carsData[idx].priceUAH = priceUAH;
+        if (priceUSD) carsData[idx].priceUSD = priceUSD;
+        if (engine) carsData[idx].engine = engine;
+        if (fuel) carsData[idx].fuel = fuel;
+        if (drive) carsData[idx].drive = drive;
+        if (transmission) carsData[idx].transmission = transmission;
+        if (year) carsData[idx].year = year;
+        if (imgStr) carsData[idx].img = imgStr.split(',').map(s => s.trim());
+        
+        saveToLocalStorage();
+        document.querySelectorAll('.admin-form input').forEach(inp => inp.value = '');
+        showToast('✅ Изменения сохранены!');
+    }
+    
+    function deleteCar() {
+        const idx = document.getElementById('edit-car-select').value;
+        if (idx !== '' && confirm('🗑️ Удалить машину?')) {
+            carsData.splice(idx, 1);
+            saveToLocalStorage();
+            document.querySelectorAll('.admin-form input').forEach(inp => inp.value = '');
+            showToast('✅ Машина удалена');
+        }
+    }
+    
+    window.addCar = addCar;
+    window.editCar = editCar;
+    window.deleteCar = deleteCar;
+    
+    renderCarList();
+    updateEditSelect();
+</script>
+</body>
+</html>
